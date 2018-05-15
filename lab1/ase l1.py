@@ -1,51 +1,95 @@
-import random
+import time
 import numpy as np
-numberOfElements = 5
-data = np.random.randint(200, size=numberOfElements)
+
+#DATA GENERATION
+numberOfElements = 1000
+data = np.random.randint(2, size=numberOfElements)
+
+#BABELKOWE SORTOWANIE
+
 samples = np.copy(data)
 
+def bubbleSorting(array):
+    arrayLen = len(array)
+    for i in range(arrayLen):
+        for j in range(0, arrayLen-i-1):
+            if array[j] > array[j+1] :
+                array[j], array[j+1] = array[j+1], array[j]
 
-def calculatePivValue():
-    lowerDigIdx =  np.argmin(qckSort)
-    higherDigIdx =  np.argmax(qckSort)
-    closePivVal = (qckSort[higherDigIdx] - qckSort[lowerDigIdx]) / 2
-    idx = (np.abs(qckSort - closePivVal)).argmin()
-    return idx
-
-# print(data)
-#  BABELKOWE SORTOWANIE
-isBiger = True
-isSorted = False
-while (isSorted == False):
-    for i in range(numberOfElements -1,0,-1):
-        if (samples[i] >= samples[i - 1]):
-            isBiger = True
-            isSorted = True
-        else:
-            isBiger = False
-            buf = samples[i]
-            samples[i] = samples[i - 1]
-            samples[i - 1] = buf
-            isSorted = False
-            break
-
-print ("KONIEC")
-# SORTOWANIE POPRZEZ WYMIANE
+# SORTING BY EXCHANGE
 newSamples  = np.copy(data)
 
-print("ENETERING EXCHANGE SORTING")
+def exchangeSorting(array):
+    for i in range (numberOfElements):
+        lowerDigIdx =  np.argmin(array[i:])
+        buf = array[i]                 # saving the 0, 1, 2 element
+        array[i] = array[lowerDigIdx + i]
+        array[lowerDigIdx + i] = buf
 
+# SORTING BY QUICKSORT
 
-for i in range (numberOfElements):
-    lowerDigIdx =  np.argmin(newSamples[i:])
-    buf = newSamples[i]                 # saving the 0, 1, 2 element
-    newSamples[i] = newSamples[lowerDigIdx + i]
-    newSamples[lowerDigIdx + i] = buf
-print("EXCHANGE ARRAY SORTING ENDED")
+qkSort  = np.copy(data)
 
-print("ENETERING QUICKSORT")
-qckSort = np.copy(data)
-pivotIdx = calculatePivValue()
+def part(array, leftIdx,rightIdx):
+    pivotIdx = leftIdx
+    pivotVal = array[rightIdx]
+    for i in range(leftIdx,rightIdx):
+        if array[i] <= pivotVal:
+            array[i], array[pivotIdx] = array[pivotIdx], array[i]
+            pivotIdx += 1
+    array[rightIdx], array[pivotIdx] = array[pivotIdx], array[rightIdx]
+    return pivotIdx
 
-print("END OF QUICKSORT")
-# print(calculatePivValue())
+def quickSortWhole(array, leftIdx, rightIdx):
+    if(leftIdx < rightIdx):
+        pIndex = part(array,leftIdx,rightIdx)
+        quickSortWhole(array,leftIdx, pIndex -1)
+        quickSortWhole(array,pIndex + 1, rightIdx)
+
+print ("BUBBLE SORTING START")
+start = time.time()
+bubbleSorting(samples)
+sortingTimeOne = time.time() - start
+print ("BUBBLE SORTING END")
+print("EXCHANGE SORTING START")
+start1 = time.time()
+exchangeSorting(newSamples)
+sortingTimeTwo = time.time() - start1
+print("EXCHANGE SORTING END")
+print("QUICKSORT START")
+start2 = time.time()
+quickSortWhole(qkSort, 0, numberOfElements -1)
+sortingTimeThird = time.time() - start2
+print("QUICKSORTEND")
+
+print("TIMES: ")
+print(sortingTimeOne)
+print(sortingTimeTwo)
+print(sortingTimeThird)
+
+# def quickSort(array, leftidX, rightidX):
+#         pivotIdx = np.random.randint(leftidX, rightidX)
+#         pivotVal = array[pivotIdx]
+#         # print ("PivotValue", array[pivotIdx])
+#         print(array)
+#         while(leftidX < rightidX):
+#             for i in range (leftidX, rightidX):
+#                 if array[i] >= pivotVal:
+#                     leftidX = i
+#                     # print("LEFT: ",array[leftidX])
+#                     break
+#             for j in range(rightidX, leftidX, -1):
+#                 if array[j] <= array[leftidX] and array[j] <= pivotVal:
+#                     rightidX = j
+#                     # print("RIGHT: ",array[rightidX])
+#                     break
+#             if(array[leftidX] >= pivotVal >= array[rightidX] and leftidX < rightidX):
+#                 # print(array[leftidX], array[rightidX])
+#                 buf = array[leftidX]
+#                 array[leftidX] = array[rightidX]
+#                 array[rightidX] = buf
+#                 leftidX += 1
+#             else: leftidX += 1
+#             if(leftidX >= rightidX): break
+#             # print(array)
+#         return pivotIdx
